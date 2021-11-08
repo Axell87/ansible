@@ -1,0 +1,29 @@
+---
+
+- name: Playbook_3_Lesson_1  
+  hosts: nodes
+  become: yes
+
+  tasks:
+  
+  #Add net.ifnames=0 and net.iframes parameter to /etc/default/grub
+  - name: Add net.iframes parameter to grub
+    lineinfile:
+      dest: /etc/default/grub
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=(?!.* net.iframes)\"[^\"]+)(\".*)'
+      line: '\1 net.iframes=0\2'
+
+  #Add net.ifnames=0 and biosdevname=0 parameter to /etc/default/grub
+  - name: Add biosdevname=0 parameter to grub
+    lineinfile:
+      dest: /etc/default/grub
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=(?!.* biosdevname)\"[^\"]+)(\".*)'
+      line: '\1 biosdevname=0\2'
+
+  #Add changes to config file
+  - name: Write grub configuration file
+    command: grub2-mkconfig
+...
+

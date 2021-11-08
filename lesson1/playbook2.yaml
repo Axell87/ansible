@@ -1,0 +1,25 @@
+---
+
+- name: Playbook_2_Lesson_1  
+  hosts: nodes
+  become: yes
+   
+  tasks:
+  #удаление hhpd (Apache) - STATE = REMOVED
+  - name: Uninstalling httpd
+    action: yum name=httpd state=removed
+  #Удаление файла index.html из соответствующей директории
+  - name: Remove file index.html
+    file:
+      path: /var/www/html/index.html
+      state: absent
+
+  #Закрытие 80 порта для запросов на сервер
+  - name: Forbid HTTP Service in Linux Firewall
+    firewalld:
+     service: http
+     #постоянно делать данное правило, даже при перезагрузке
+     permanent: yes
+     state: disabled
+
+...

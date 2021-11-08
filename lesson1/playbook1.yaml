@@ -1,0 +1,35 @@
+---
+
+- name: Playbook_1_Lesson_1  
+  hosts: nodes
+  become: yes
+   
+  tasks:
+  #установка httpd (Apache)
+  - name: Installing httpd
+    action: yum name=httpd state=present
+  #создание файла index.html и копирование в нужную папка
+  - name: Copy index.html to directory
+    copy:
+      src: /home/ansible/lesson1/index.html
+      dest: /var/www/html/index.html
+  #запуск сервера при каждом старте и статус его всегда enabled
+  - name: Start httpd and enable it on every boot
+    service:
+     name: httpd
+     enabled: yes
+     state: started
+  #открытие 80 порта для запросов на сервер
+  - name: Allow HTTP Service in Linux Firewall
+    firewalld:
+     service: http
+     #постоянно делать данное правило, даже при перезагрузке
+     permanent: yes
+     state: enabled
+  #проверка статуса службы сервиса httpd
+  - name: Check status of httpd service
+    service_facts:
+    register: services_state
+  - debug:
+      var=services_state.ansible_facts.services["httpd.service"].state
+...
