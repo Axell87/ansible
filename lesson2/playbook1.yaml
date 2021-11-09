@@ -1,0 +1,48 @@
+---
+
+- name: Playbook_1_Lesson_2  
+  hosts: nodes
+  become: yes
+  #Шифрованный файл с паролями для всех трех пользователей:
+  # pwhash1=
+  # pwhash2=
+  # pwhash3=
+  vars_files:
+    - userpass1.yaml
+  tasks:
+
+  #Создание пользователя Alice
+    - name: Create user account Alice
+      user:
+        name: "Alice"
+        home: /home/Alice
+        state: present
+        shell: /bin/bash
+        group: root
+        password: "{{ pwhash1 }}"
+        comment: "alice@epam.com"
+
+  #Создание пользователя Bob
+    - name: Create user account Bob
+      user:
+        name: "Bob"
+        home: /home/Bob
+        state: present
+        shell: /bin/bash
+        group: root
+        password: "{{ pwhash2 }}"
+        comment: "bob@epam.com"
+
+
+  #Создание пользователя Carol
+    - name: Create user account Carol
+      user:
+        name: "Carol"
+        home: /home/Carol
+        state: present
+        shell: /bin/bash
+        group: root
+        password: "{{ pwhash3 }}"
+        comment: "carol@epam.com"
+
+...
