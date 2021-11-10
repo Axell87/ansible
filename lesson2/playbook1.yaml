@@ -4,9 +4,6 @@
   hosts: nodes
   become: yes
   #Шифрованный файл с паролями для всех трех пользователей:
-  # pwhash1=
-  # pwhash2=
-  # pwhash3=
   vars_files:
     - userpass1.yaml
   tasks:
@@ -18,9 +15,9 @@
         home: /home/Alice
         state: present
         shell: /bin/bash
-        group: root
-        password: "{{ pwhash1 }}"
-        comment: "alice@epam.com"
+        password: "{{ pwhash1 | password_hash('sha512') }}"
+        comment: "alice@example.com"
+        update_password: on_create
 
   #Создание пользователя Bob
     - name: Create user account Bob
@@ -29,9 +26,9 @@
         home: /home/Bob
         state: present
         shell: /bin/bash
-        group: root
-        password: "{{ pwhash2 }}"
-        comment: "bob@epam.com"
+        password: "{{ pwhash2 | password_hash('sha512') }}"
+        comment: "bob@example.com"
+        update_password: on_create
 
 
   #Создание пользователя Carol
@@ -41,8 +38,8 @@
         home: /home/Carol
         state: present
         shell: /bin/bash
-        group: root
-        password: "{{ pwhash3 }}"
-        comment: "carol@epam.com"
+        password: "{{ pwhash3 | password_hash('sha512') }}"
+        comment: "carol@exapmle.com"
+        update_password: on_create
 
 ...
