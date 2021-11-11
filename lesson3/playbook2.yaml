@@ -1,0 +1,53 @@
+---
+
+- name: Playbook_2_Lesson_3  
+  hosts: ftp
+  become: yes
+  vars:
+    local_enable: yes
+    write_enable: yes
+    anonymous_enable: yes
+    anon_upload_enable: yes
+  
+  tasks:
+  #установка ftp
+  - name: Installing ftp
+    action: yum name={{ service_ftp }} state=present
+  #создание файла index.html и копирование в нужную папка
+
+  #запуск сервера при каждом старте и статус его всегда enabled
+  - name: Start ftp and enable it on every boot
+    service:
+     name: "{{ service_ftp }}"
+     enabled: yes
+     state: started
+  #открытие портов для запросов на сервер
+  - name: Allow ports for ftp in Linux Firewall
+    firewalld:
+      port: "{{ port_for_ftp }}/tcp"
+      #постоянно делать данное правило, даже при перезагрузке
+      permanent: yes
+      state: enabled
+
+  #копирование файла конфигурации ftp
+  - name: Copy ftp conf. file
+    template:
+      src: ftp_conf.j2
+      dest: /etc/vsftpd/vsftpd.conf
+
+  #проверка статуса службы сервиса ftp
+  - name: See FTP FATCS
+    service_facts:
+    register: services_state
+  - debug:
+      #var=services_state.ansible_facts.services["vsftpd.service"].state
+      msg: "{{ ansible_facts.services['vsftpd.service'].state }}"
+
+  - name: Verify ftp is running
+    assert:
+      that:
+        - "'{{ ansible_facts.services['vsftpd.service'].state }}' == 'running'"
+      fail_msg: "FTP is down for some reasonm pls check your server"
+      success_msg: "FTP is running!! Please upload your files!"
+
+...
