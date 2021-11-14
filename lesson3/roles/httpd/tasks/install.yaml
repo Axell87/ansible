@@ -1,5 +1,0 @@
----
-  
-#установка httpd (Apache)
-- name: Installing httpd
-  yum: name={{ service_apache }} state=present

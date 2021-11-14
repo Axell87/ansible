@@ -1,2 +1,0 @@
-service_ftp          : vsftpd
-port_for_ftp        : 21
