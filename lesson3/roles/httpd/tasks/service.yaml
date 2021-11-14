@@ -1,6 +1,6 @@
 ---
 
-- name: Restart HTTPD
-  service:
-    name: httpd
-    state: restarted
+#- name: Restart HTTPD
+#  service:
+#    name: httpd
+#    state: restarted

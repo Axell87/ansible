@@ -1,4 +1,0 @@
-my_path                 : /var/www/html/index.html
-message_for_web_page    : My web server is ready.
-service_apache          : httpd
-ports_for_apache        : [ 80, 443 ]

@@ -1,2 +1,7 @@
 ---
 # handlers file for /home/ansible/lesson3/roles/httpd
+
+- name: Restart HTTPD
+  service:
+    name: httpd
+    state: restarted

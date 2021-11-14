@@ -7,7 +7,8 @@
     src: index_html.j2
     dest: "{{ my_path }}"
     #Применение Handler в случае изменения содержания страницы
-    notify: Restart HTTPD
+    notify: 
+      - Restart HTTPD
 
     #запуск сервера при каждом старте и статус его всегда enabled
 - name: Start httpd and enable it on every boot
