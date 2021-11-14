@@ -1,0 +1,6 @@
+---
+# handlers file for /home/ansible/lesson3/roles/ftp
+- name: restart FTP
+  service:
+    name: "{{ service_ftp }}"
+    state: restarted

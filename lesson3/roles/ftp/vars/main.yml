@@ -1,0 +1,14 @@
+---
+# vars file for /home/ansible/lesson3/roles/ftp
+service_ftp                 : vsftpd
+port_for_ftp                : [ 20, 21 ]
+services_for_ftp            : [ vsftpd, python3-libsemanage ]
+ftp_config_file             : /etc/vsftpd/vsftpd.conf
+#директория для чтения
+ftp_anonimous_dir_to_read   : /var/ftp/pub
+#директория для записи
+ftp_anonimous_dir_to_write  : /var/ftp/pub/upload
+
+
+
+

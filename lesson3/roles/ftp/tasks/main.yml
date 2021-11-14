@@ -1,0 +1,73 @@
+---
+# tasks file for /home/ansible/lesson3/roles/ftp
+  #установка ftp и зависимостей
+- name: Installing ftp and neсessary packages
+  action: yum name={{ services_for_ftp }} state=present
+
+#запуск сервера при каждом старте и статус его всегда enabled
+- name: Start ftp and enable it on every boot
+  service:
+    name: "{{ service_ftp }}"
+    enabled: yes
+    state: started
+
+#копирование файла конфигурации ftp
+- name: Copy ftp conf. file
+  template:
+    src: ftp_conf.j2
+    dest: "{{ ftp_config_file }}"
+    mode: '0600'
+  notify: restart FTP
+
+
+#Настройки на чтение директории
+- name: Add ftp anonimous read directory
+  file:
+    path: '{{ ftp_anonimous_dir_to_read }}'
+    state: directory
+    owner: '{{ ftp_owner }}'
+    mode: '0755'
+    setype: 'public_content_t'
+
+#Настройки на запись в директорию
+- name: Add ftp anonimous write directory
+  file:
+    path: '{{ ftp_anonimous_dir_to_write }}'
+    state: directory
+    owner: '{{ ftp_owner }}'
+    mode: '0777'
+    setype: 'public_content_rw_t'
+
+#Установка опции ftpd_anon_write
+- name: Enable ftp_anon_write option
+  seboolean:
+    name: ftpd_anon_write
+    state: yes
+    persistent: yes
+
+#открытие портов для запросов на сервер
+- name: Allow ports for ftp in Linux Firewall
+  firewalld:
+    port: "{{ item }}/tcp"
+    #постоянно делать данное правило, даже при перезагрузке
+    permanent: yes
+    state: enabled
+  loop: "{{ port_for_ftp }}"
+  notify: restart FTP
+
+#проверка статуса службы сервиса ftp
+- name: See FTP FATCS
+  service_facts:
+  register: services_state
+- debug:
+    #var=services_state.ansible_facts.services["vsftpd.service"].state
+    msg: "{{ ansible_facts.services['vsftpd.service'].state }}"
+
+- name: Verify ftp is running
+  assert:
+    that:
+      - "'{{ ansible_facts.services['vsftpd.service'].state }}' == 'running'"
+    fail_msg: "FTP is down for some reasonm pls check your server"
+    success_msg: "FTP is running!! Please upload your files!"
+
+...
